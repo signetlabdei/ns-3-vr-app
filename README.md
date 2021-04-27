@@ -2,7 +2,8 @@ VR traffic model for ns-3
 =========================
 
 **NOTE:** You can find more information about this work in the following paper:
-```Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," accepted to Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Pre-print available:``` [arXiv:2103.04609](https://arxiv.org/abs/2103.04609)
+
+_**Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," accepted to Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Pre-print available: [arXiv:2103.04609](https://arxiv.org/abs/2103.04609)**_
 
 Examples of usage for the newly introduced features can be found in the ``examples/`` folder.
 
