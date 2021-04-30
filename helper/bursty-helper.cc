@@ -39,7 +39,7 @@ BurstyHelper::BurstyHelper (std::string protocol, Address address)
   m_burstyApplicationFactory.Set ("Remote", AddressValue (address));
 }
 
-void 
+void
 BurstyHelper::SetAttribute (std::string name, const AttributeValue &value)
 {
   m_burstyApplicationFactory.Set (name, value);
@@ -59,7 +59,7 @@ BurstyHelper::SetBurstGenerator (std::string type,
   m_burstGeneratorFactory.Set (n4, v4);
 }
 
-void 
+void
 BurstyHelper::SetBurstGeneratorAttribute (std::string name, const AttributeValue &value)
 {
   m_burstGeneratorFactory.Set (name, value);
@@ -115,12 +115,14 @@ BurstyHelper::AssignStreams (NodeContainer c, int64_t stream)
           Ptr<BurstyApplication> app = DynamicCast<BurstyApplication> (node->GetApplication (j));
           if (app)
             {
-              Ptr<SimpleBurstGenerator> simpleGenerator = DynamicCast<SimpleBurstGenerator> (app->GetBurstGenerator ()); // TODO improve
+              Ptr<SimpleBurstGenerator> simpleGenerator =
+                  DynamicCast<SimpleBurstGenerator> (app->GetBurstGenerator ()); // TODO improve
               if (simpleGenerator)
                 {
                   currentStream += simpleGenerator->AssignStreams (currentStream);
                 }
-              Ptr<VrBurstGenerator> vrGenerator = DynamicCast<VrBurstGenerator> (app->GetBurstGenerator ()); // TODO improve
+              Ptr<VrBurstGenerator> vrGenerator =
+                  DynamicCast<VrBurstGenerator> (app->GetBurstGenerator ()); // TODO improve
               if (vrGenerator)
                 {
                   currentStream += vrGenerator->AssignStreams (currentStream);
