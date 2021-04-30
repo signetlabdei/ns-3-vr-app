@@ -42,8 +42,9 @@ VrBurstGenerator::GetTypeId (void)
           .AddConstructor<VrBurstGenerator> ()
           .AddAttribute ("FrameRate",
                          "The frame rate of the VR application [FPS].",
-                         DoubleValue (30),
-                         MakeDoubleAccessor (&VrBurstGenerator::SetFrameRate, &VrBurstGenerator::GetFrameRate),
+                         DoubleValue (60),
+                         MakeDoubleAccessor (&VrBurstGenerator::SetFrameRate,
+                                             &VrBurstGenerator::GetFrameRate),
                          MakeDoubleChecker<double> (0))
           .AddAttribute ("TargetDataRate",
                          "The target data rate that the VR application will try to achieve.",
@@ -107,7 +108,7 @@ VrBurstGenerator::SetTargetDataRate (DataRate targetDataRate)
 {
   NS_LOG_FUNCTION (this << targetDataRate);
 
-  NS_ABORT_MSG_IF (targetDataRate.GetBitRate () == 0,
+  NS_ABORT_MSG_IF (targetDataRate.GetBitRate () <= 0,
                    "Target data rate must be positive, instead: " << targetDataRate);
   m_targetDataRate = targetDataRate;
 
@@ -149,55 +150,54 @@ void
 VrBurstGenerator::SetupModel ()
 {
   NS_LOG_FUNCTION (this);
-  NS_ASSERT_MSG (m_frameRate == 30,
-                 "Only 30 FPS supported for the moment, instead, frame rate was set to: " << m_frameRate);
 
-  double S = m_targetDataRate.GetBitRate () / 8 / m_frameRate; // expected frame size [B]
-  double ifi = 1 / m_frameRate; // expected inter frame interarrival [s]
+  double S = m_targetDataRate.GetBitRate () / 8.0 / m_frameRate; // expected frame size [B]
+  double ifi = 1.0 / m_frameRate; // expected inter frame interarrival [s]
 
   // Model frame size stats
-  double s1 = 0.8826;
-  double s2 = 1.2430;
+  double sP = 0.9008;
+  double sI = 1.1764;
 
-  double d01 = -7286.7632 / 8; // [B]
-  double d02 = 104474.1219 / 8; // [B]
-  double d1 = 0.1474;
-  double d2 = 0.0193;
+  double aP = 9.0399;
+  double aI = 26.2065;
+  double bP = 0.6251;
+  double bI = 0.5730;
 
-  double p1 = 0.6744; // p2 = 1 - p1
+  double wP = 0.6400; // wI = 1 - wP
 
-  double mean1 = s1 * S;
-  double std1 = std::max (0.0, d01 + d1 * S);
+  double meanP = sP * S;
+  double stdP = aP * std::pow (S, bP);
 
-  double mean2 = s2 * S;
-  double std2 = std::max (0.0, d02 + d2 * S);
+  double meanI = sI * S;
+  double stdI = aI * std::pow (S, bI);
 
-  NS_LOG_DEBUG ("Frame size: 2 component GMM with " <<
-                "N1(mean=" << mean1 << ",std=" << std1 << ") with p1=" << p1 << ", "
-                "N2(mean=" << mean2 << ",std=" << std2 << ") with p2=" << 1 - p1);
+  NS_LOG_DEBUG ("Frame size: 2 component GMM with "
+                << "N1(mean=" << meanP << ",std=" << stdP << ") with wP=" << wP << ", "
+                << "N2(mean=" << meanI << ",std=" << stdI << ") with wI=" << 1 - wP);
 
-  Ptr<NormalRandomVariable> rv1 = CreateObjectWithAttributes<NormalRandomVariable> (
-      "Mean", DoubleValue (mean1),
-      "Variance", DoubleValue (std1 * std1),
-      "Bound", DoubleValue (mean1)); // avoid negative frame sizes
-  Ptr<NormalRandomVariable> rv2 = CreateObjectWithAttributes<NormalRandomVariable> (
-      "Mean", DoubleValue (mean2),
-      "Variance", DoubleValue (std2 * std2),
-      "Bound", DoubleValue (mean2)); // avoid negative frame sizes
+  Ptr<NormalRandomVariable> rvP = CreateObjectWithAttributes<NormalRandomVariable> (
+      "Mean", DoubleValue (meanP),
+      "Variance", DoubleValue (stdP * stdP),
+      "Bound", DoubleValue (meanP)); // avoid negative frame sizes
+  Ptr<NormalRandomVariable> rvI = CreateObjectWithAttributes<NormalRandomVariable> (
+      "Mean", DoubleValue (meanI),
+      "Variance", DoubleValue (stdI * stdI),
+      "Bound", DoubleValue (meanI)); // avoid negative frame sizes
 
   m_frameSizeRv = CreateObject<MixtureRandomVariable> ();
-  std::vector<double> wCdf{p1, 1.0};
-  std::vector<Ptr<RandomVariableStream>> rvs{rv1, rv2};
+  std::vector<double> wCdf{wP, 1.0};
+  std::vector<Ptr<RandomVariableStream>> rvs{rvP, rvI};
   m_frameSizeRv->SetRvs (wCdf, rvs);
 
   // Model inter frame interarrival
   double location = ifi;
-  double scale = 5.3934e-3 / std::sqrt (2); // [s]
+  double ifiStd = 0.0827205 / m_frameRate; // [s]
+  double scale = ifiStd * std::sqrt (3) / M_PI; // [s]
 
-  m_periodRv = CreateObjectWithAttributes<LaplaceRandomVariable> (
+  m_periodRv = CreateObjectWithAttributes<LogisticRandomVariable> (
       "Location", DoubleValue (location),
       "Scale", DoubleValue (scale),
-      "Bound", DoubleValue (location)); // TODO improve
+      "Bound", DoubleValue (location));
 }
 
 } // Namespace ns3

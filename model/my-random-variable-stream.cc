@@ -37,33 +37,33 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("MyRandomVariableStream");
 
-NS_OBJECT_ENSURE_REGISTERED (LaplaceRandomVariable);
+NS_OBJECT_ENSURE_REGISTERED (LogisticRandomVariable);
 
-const double LaplaceRandomVariable::INFINITE_VALUE = 1e307;
+const double LogisticRandomVariable::INFINITE_VALUE = 1e307;
 
 TypeId
-LaplaceRandomVariable::GetTypeId (void)
+LogisticRandomVariable::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::LaplaceRandomVariable")
-    .SetParent<RandomVariableStream>()
-    .SetGroupName ("Core")
-    .AddConstructor<LaplaceRandomVariable> ()
-    .AddAttribute ("Location", "The location value for the laplace distribution returned by this RNG stream.",
-                   DoubleValue (0.0),
-                   MakeDoubleAccessor (&LaplaceRandomVariable::m_location),
-                   MakeDoubleChecker<double>())
-    .AddAttribute ("Scale", "The scale value for the laplace distribution returned by this RNG stream.",
-                   DoubleValue (1.0),
-                   MakeDoubleAccessor (&LaplaceRandomVariable::m_scale),
-                   MakeDoubleChecker<double>())
-    .AddAttribute ("Bound", "The bound on the values returned by this RNG stream.",
-                   DoubleValue (INFINITE_VALUE),
-                   MakeDoubleAccessor (&LaplaceRandomVariable::m_bound),
-                   MakeDoubleChecker<double>())
-  ;
+  static TypeId tid =
+      TypeId ("ns3::LogisticRandomVariable")
+          .SetParent<RandomVariableStream> ()
+          .SetGroupName ("Core")
+          .AddConstructor<LogisticRandomVariable> ()
+          .AddAttribute ("Location", "The location value for the logistic distribution returned by this RNG stream.",
+                         DoubleValue (0.0),
+                         MakeDoubleAccessor (&LogisticRandomVariable::m_location),
+                         MakeDoubleChecker<double> ())
+          .AddAttribute ("Scale", "The scale value for the logistic distribution returned by this RNG stream.",
+                         DoubleValue (1.0),
+                         MakeDoubleAccessor (&LogisticRandomVariable::m_scale),
+                         MakeDoubleChecker<double> ())
+          .AddAttribute ("Bound", "The bound on the values returned by this RNG stream.",
+                         DoubleValue (INFINITE_VALUE),
+                         MakeDoubleAccessor (&LogisticRandomVariable::m_bound),
+                         MakeDoubleChecker<double> ());
   return tid;
 }
-LaplaceRandomVariable::LaplaceRandomVariable ()
+LogisticRandomVariable::LogisticRandomVariable ()
 {
   // m_location, m_scale, and m_bound are initialized after constructor
   // by attributes
@@ -71,27 +71,26 @@ LaplaceRandomVariable::LaplaceRandomVariable ()
 }
 
 double
-LaplaceRandomVariable::GetLocation (void) const
+LogisticRandomVariable::GetLocation (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_location;
 }
 double
-LaplaceRandomVariable::GetScale (void) const
+LogisticRandomVariable::GetScale (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_scale;
 }
 double
-LaplaceRandomVariable::GetBound (void) const
+LogisticRandomVariable::GetBound (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_bound;
 }
 
 double
-LaplaceRandomVariable::GetValue (double location, double scale,
-                                 double bound /* = LaplaceRandomVariable::INFINITE_VALUE*/)
+LogisticRandomVariable::GetValue (double location, double scale, double bound)
 {
   NS_LOG_FUNCTION (this << location << scale << bound);
 
@@ -104,34 +103,32 @@ LaplaceRandomVariable::GetValue (double location, double scale,
           v = (1 - v);
         }
 
-      // Calculate the laplace random variable.
-      v -= 0.5;
-      double signv = (v >= 0) ? 1 : -1;
-      double r = location - scale * signv * std::log (1 - 2 * std::fabs (v));
+      // Calculate the logistic random variable.
+      double x = location + scale * std::log (v / (1 - v));
 
       // Use this value if it's acceptable.
-      if (std::fabs (r - m_location) <= bound)
+      if (std::fabs (x - m_location) <= bound)
         {
-          return r;
+          return x;
         }
     }
 }
 
 uint32_t
-LaplaceRandomVariable::GetInteger (uint32_t location, uint32_t scale, uint32_t bound)
+LogisticRandomVariable::GetInteger (uint32_t location, uint32_t scale, uint32_t bound)
 {
   NS_LOG_FUNCTION (this << location << scale << bound);
   return static_cast<uint32_t> (GetValue (location, scale, bound));
 }
 
 double
-LaplaceRandomVariable::GetValue (void)
+LogisticRandomVariable::GetValue (void)
 {
   NS_LOG_FUNCTION (this);
   return GetValue (m_location, m_scale, m_bound);
 }
 uint32_t
-LaplaceRandomVariable::GetInteger (void)
+LogisticRandomVariable::GetInteger (void)
 {
   NS_LOG_FUNCTION (this);
   return (uint32_t) GetValue (m_location, m_scale, m_bound);
