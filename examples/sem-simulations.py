@@ -222,15 +222,18 @@ if __name__ == '__main__':
                         type=int,
                         default=1)
     parser.add_argument("--numRuns",
-                        help="The number of runs per simulation. Default: 5",
+                        help="The number of runs per simulation. Default: 50",
                         type=int,
-                        default=10)
+                        default=50)
     parser.add_argument("--campaignName",
                         help="MANDATORY parameter for the campaign name. Suggested: commit hash",
                         default=None)
     parser.add_argument("--paramSet",
-                        help="Parameter set",
+                        help="MANDATORY parameter set",
                         default=None)
+    parser.add_argument("--frameRate",
+                        help="Frame rate. Default: 60",
+                        default=60)
     args = parser.parse_args()
 
     assert args.campaignName is not None, "Undefined parameter --campaignName"
@@ -262,17 +265,17 @@ if __name__ == '__main__':
     if args.paramSet == "nStas":
         param_combination = OrderedDict({
             "appRate": "50Mbps",
-            "frameRate": 30,
+            "frameRate": args.frameRate,
             "burstGeneratorType": ["model", "trace", "deterministic"],
-            "nStas": [2, 4, 6, 8],
+            "nStas": list(range(1, 8+1)),
             "simulationTime": 10,
             "RngRun": list(range(args.numRuns))
         })
 
     elif args.paramSet == "appRate":
         param_combination = OrderedDict({
-            "appRate": [f"{rate}Mbps" for rate in range(5, 50+1, 5)],
-            "frameRate": 30,
+            "appRate": [f"{rate}Mbps" for rate in range(10, 50+1, 10)],
+            "frameRate": args.frameRate,
             "burstGeneratorType": ["model", "trace", "deterministic"],
             "nStas": 1,
             "simulationTime": 10,

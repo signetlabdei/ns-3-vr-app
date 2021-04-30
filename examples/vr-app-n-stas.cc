@@ -132,7 +132,7 @@ main (int argc, char *argv[])
   uint32_t nStas = 2; // the number of STAs around the AP
   double distance = 1; // the distance from the AP [m]
   std::string appRate = "50Mbps"; // the app target data rate
-  double frameRate = 30; // the app frame rate [FPS]
+  double frameRate = 60; // the app frame rate [FPS]
   std::string burstGeneratorType = "model"; // type of burst generator {"model", "trace", "deterministic"}
   double simulationTime = 10; // simulation time in seconds
 
@@ -249,8 +249,8 @@ main (int argc, char *argv[])
     {
       uint32_t dataRateMbps = uint32_t (DataRate (appRate).GetBitRate () / 1e6);
       std::ostringstream filenameSs;
-      filenameSs << GetInputPath () << "src/applications/model/BurstGeneratorTraces/steam_init_"
-                 << dataRateMbps << "mbps_" << uint32_t (frameRate) << "fps_5min_usb_still.csv";
+      filenameSs << GetInputPath () << "src/applications/model/BurstGeneratorTraces/"
+                 << dataRateMbps << "mbps_" << uint32_t (frameRate) << "fps.csv";
 
       NS_LOG_DEBUG ("Trace file generator with filename=" << filenameSs.str ());
 
