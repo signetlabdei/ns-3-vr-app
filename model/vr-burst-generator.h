@@ -104,7 +104,7 @@ private:
   double m_frameRate; //!< The frame rate of the VR application [FPS]
   DataRate m_targetDataRate; //!< The target data rate of the VR application
 
-  Ptr<LaplaceRandomVariable> m_periodRv{0}; //!< RNG for period duration [s]
+  Ptr<LogisticRandomVariable> m_periodRv{0}; //!< RNG for period duration [s]
   Ptr<MixtureRandomVariable> m_frameSizeRv{0}; //!< RNG for frame size [B]
 };
 

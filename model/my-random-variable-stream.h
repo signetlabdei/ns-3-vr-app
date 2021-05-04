@@ -27,21 +27,20 @@
 #include <stdint.h>
 
 namespace ns3 {
-
 /**
  * \ingroup randomvariable
- * \brief The laplace distribution Random Number Generator (RNG).
+ * \brief The logistic distribution Random Number Generator (RNG).
  *
  * This class supports the creation of objects that return random numbers
- * from a fixed laplace distribution.
+ * from a fixed logistic distribution.
  *
  * The density probability function is defined over the interval (\f$-\infty\f$,\f$+\infty\f$)
- * as: \f$ \frac{1}{2b} e^{-\frac{|x-\mu|}{b}}\f$
- * where \f$ location = \mu \f$ and \f$ scale = b \f$
+ * as: \f$ \frac{e^{-(x-\mu)/s}}{s(1 + e^{-(x-\mu)/s})} \f$
+ * where \f$ location = \mu \f$ and \f$ scale = s \f$
  *
- * Since laplace distributions can theoretically return unbounded
+ * Since logistic distributions can theoretically return unbounded
  * values, it is sometimes useful to specify a fixed bound. The
- * LaplaceRandomVariable is bounded symmetrically about the mean (location) by
+ * LogisticRandomVariable is bounded symmetrically about the mean (location) by
  * this bound, i.e. its values are confined to the interval
  * [\f$mean-bound\f$,\f$mean+bound\f$].
  *
@@ -50,21 +49,21 @@ namespace ns3 {
  *   double location = 5.0;
  *   double scale = 2.0;
  *
- *   Ptr<NormalRandomVariable> x = CreateObject<NormalRandomVariable> ();
+ *   Ptr<LogisticRandomVariable> x = CreateObject<LogisticRandomVariable> ();
  *   x->SetAttribute ("Location", DoubleValue (location));
  *   x->SetAttribute ("Scale", DoubleValue (scale));
  *
  *   // The expected value for the mean of the values returned by a
- *   // laplace distributed random variable is equal to location.
+ *   // logistic distributed random variable is equal to location.
  *   double value = x->GetValue ();
  * \endcode
  */
-class LaplaceRandomVariable : public RandomVariableStream
+class LogisticRandomVariable : public RandomVariableStream
 {
 public:
-  /* Large constant to bound the range. */
+  /** Large constant to bound the range. */
   static const double INFINITE_VALUE;
-  
+
   /**
    * \brief Register this type.
    * \return The object TypeId.
@@ -75,7 +74,7 @@ public:
    * \brief Creates a laplace distribution RNG with the default
    * values for the location and scale.
    */
-  LaplaceRandomVariable ();
+  LogisticRandomVariable ();
 
   /**
    * Get the location parameter of the distribution
@@ -99,20 +98,21 @@ public:
    * \brief Get the next random value, as a double within the specified bound
    * \f$[location - bound, location + max]\f$.
    *
-   * \param location the location of the laplace random variable
-   * \param scale the scale of the laplace random variable
-   * \param bound the bound of the laplace random variable
+   * \param location the location of the logistic random variable
+   * \param scale the scale of the logistic random variable
+   * \param bound the bound of the logistic random variable
    * \return A floating point random value.
    */
-  double GetValue (double location, double scale, double bound = LaplaceRandomVariable::INFINITE_VALUE);
+  double GetValue (double location, double scale,
+                   double bound = LogisticRandomVariable::INFINITE_VALUE);
 
   /**
    * \brief Get the next random value, as an unsigned integer within the specified bound
    * \f$[location - bound, location + max]\f$.
    *
-   * \param location the location of the laplace random variable
-   * \param scale the scale of the laplace random variable
-   * \param bound the bound of the laplace random variable
+   * \param location the location of the logistic random variable
+   * \param scale the scale of the logistic random variable
+   * \param bound the bound of the logistic random variable
    * \return A random unsigned integer value.
    */
   uint32_t GetInteger (uint32_t location, uint32_t scale, uint32_t bound);
@@ -130,11 +130,11 @@ public:
   virtual uint32_t GetInteger (void) override;
 
 private:
-  double m_location; //!< The location value of the laplace distribution.
-  double m_scale; //!< The scale of the laplace distribution.
+  double m_location; //!< The location value of the logistic distribution.
+  double m_scale; //!< The scale of the logistic distribution.
   double m_bound; //!< The bound on values that can be returned by this RNG stream.
 
-};  // class LaplaceRandomVariable
+}; // class LogisticRandomVariable
 
 /**
  * \ingroup randomvariable

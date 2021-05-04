@@ -35,7 +35,8 @@
 
 using namespace ns3;
 
-int main (int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
   uint32_t nSamples = 1000000;
 
@@ -46,11 +47,13 @@ int main (int argc, char *argv[])
   Ptr<MixtureRandomVariable> x = CreateObject<MixtureRandomVariable> ();
 
   // setup weights cdf
-  std::vector<double> w {0.7, 1.0}; // p1 = 0.7, p2 = 0.3
+  std::vector<double> w{0.7, 1.0}; // p1 = 0.7, p2 = 0.3
   // setup random variables
-  std::vector<Ptr<RandomVariableStream> > rvs;
-  rvs.push_back (CreateObjectWithAttributes<NormalRandomVariable> ("Mean", DoubleValue (5), "Variance", DoubleValue (1)));
-  rvs.push_back (CreateObjectWithAttributes<NormalRandomVariable> ("Mean", DoubleValue (10), "Variance", DoubleValue (4)));
+  std::vector<Ptr<RandomVariableStream>> rvs;
+  rvs.push_back (CreateObjectWithAttributes<NormalRandomVariable> ("Mean", DoubleValue (5),
+                                                                   "Variance", DoubleValue (1)));
+  rvs.push_back (CreateObjectWithAttributes<NormalRandomVariable> ("Mean", DoubleValue (10),
+                                                                   "Variance", DoubleValue (4)));
 
   x->SetRvs (w, rvs);
 
@@ -59,4 +62,5 @@ int main (int argc, char *argv[])
       std::cout << x->GetValue () << std::endl;
     }
 
+  return 0;
 }

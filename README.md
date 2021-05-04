@@ -9,14 +9,14 @@ Examples of usage for the newly introduced features can be found in the ``exampl
 
 This module comprises the following features:
 
-* Adds `BurstyApplication` and `BurstSink` as ns-3 applications: they allow to model complex applications sending large data packets over UDP sockets, fragmenting them into bursts of smaller packets, and reassembling the packets at the receiver, if possible
+* Adds `BurstyApplication` and `BurstSink` as ns-3 applications: they allow to model complex applications by sending large data packets over UDP sockets, fragmenting them into bursts of smaller packets, and reassembling the packets at the receiver, if possible
 * A tracing system allows to obtain burst-level and fragment-level information at both the transmitter and receiver side
 * Models a Virtual Reality traffic source
-* 10 of the acquired VR traffic traces can be found in this repository and can be used directly in a simulation, using the `TraceFileBurstGenerator`
+* 10 of the acquired VR traffic traces can be found in [model/BurstGeneratorTraces/](model/BurstGeneratorTraces/) and can be used directly in a simulation, using the `TraceFileBurstGenerator`
 * Additional traffic models can be implemented by simply extending the `BurstGenerator` interface
 
 Future releases will aim to:
-* Improve, add, and diversify the real VR traffic traces
+* Improve, add, and diversify the VR traffic traces, including realistic head movements in popular VR applications
 * Model second-order statistics for VR traffic
 * Include a head-rotation model, coupled with the VR traffic generator
 * Optionally include sound traffic in the VR traffic generator, other than video traffic
