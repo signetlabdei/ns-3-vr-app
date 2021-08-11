@@ -28,6 +28,7 @@
 #include "ns3/seq-ts-size-frag-header.h"
 #include "ns3/bursty-helper.h"
 #include "ns3/burst-sink-helper.h"
+#include "ns3/vr-burst-generator.h"
 
 using namespace ns3;
 
@@ -62,10 +63,12 @@ main (int argc, char *argv[])
   double simTime = 20;
   double frameRate = 30;
   std::string targetDataRate = "40Mbps";
+  std::string vrAppName = "VirusPopper";
 
   CommandLine cmd (__FILE__);
   cmd.AddValue ("frameRate", "VR application frame rate [FPS].", frameRate);
   cmd.AddValue ("targetDataRate", "Target data rate of the VR application.", targetDataRate);
+  cmd.AddValue ("vrAppName", "The VR application on which the model is based upon.", vrAppName);
   cmd.AddValue ("simTime", "Length of simulation [s].", simTime);
   cmd.Parse (argc, argv);
 
@@ -102,7 +105,8 @@ main (int argc, char *argv[])
   burstyHelper.SetAttribute ("FragmentSize", UintegerValue (1200));
   burstyHelper.SetBurstGenerator ("ns3::VrBurstGenerator",
                                   "FrameRate", DoubleValue (frameRate),
-                                  "TargetDataRate", DataRateValue (DataRate (targetDataRate)));
+                                  "TargetDataRate", DataRateValue (DataRate (targetDataRate)),
+                                  "VrAppName", StringValue(vrAppName));
 
   // Install bursty application
   ApplicationContainer serverApps = burstyHelper.Install (nodes.Get (1));

@@ -7,7 +7,7 @@ The framework aims at supporting large packets sent across a network, fragmented
 Model Description
 *****************
 
-This model is described in `[WNS3-2021]`_.
+This model is described in `[WNS3-2021]`_ and was later improved in `[Access21]`_.
 It was originally designed to model an Virtual Reality traffic source, although the bursty framework is more general.
 
 
@@ -27,7 +27,14 @@ The framework comes with three generators already implemented:
 
 - ``SimpleBurstGenerator``: the user can specify ``RandomVariableStream`` for the packet size and period.
 - ``TraceFileBurstGenerator``: traffic trace files are imported and executed in ns-3, allowing the user to import real traffic traces into its simulations. Some traces representing a VR traffic source are included.
-- ``VrBurstGenerator``: implements a traffic model able to emulate Virtual Reality traffic, as described in `[WNS3-2021]`_.
+- ``VrBurstGenerator``: implements a traffic model able to simulate VR traffic sources, as described in `[Access21]`_. The model is based on over 4 hours of acquisitions while playing three different applications targeting different types of interactions. Specifically:
+
+  #. *Minecraft*: an extremely popular game, with the mod *Vivecraft* enabling both room-scale or seated VR experiences. The user can explore by walking or swimming, and interact with the virtual world by cutting trees, digging holes, crafting tools, etc.
+  #. *Virus Popper*: during this fast-paced educational game, many cartoony-looking viruses swarm a virtual room, and the user has to attack them with cleaning tools for survival.
+  #. *Google Earth VR - Tour*: the VR version of Google earth, allowing you to explore the world with satellite imagery, 3D terrain of the entire globe, and 3D buildings in hundreds of cities around the world. The SteamVR application allows you to make tours, teleporting the user all around the world every few seconds.
+  #. *Google Earth VR - Cities*: in this case, a more interactive experience is yielded, allowing the user to fully explore cities or landmarks for as long as they want.
+
+Please note that *Google Earth VR* was used in two different ways, thus allowing us to analyze two different versions of a same application.
 
 Bursty Application description
 ##############################
@@ -102,4 +109,8 @@ References
 
 .. _`[WNS3-2021]`:
 
-[WNS3-2021] Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," accepted to Workshop on ns-3 (WNS3), 2021, Preprint available: `arXiv:2103.04609 <https://arxiv.org/abs/2103.04609>`_.
+[WNS3-2021] Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Open access DOI: `10.1145/3460797.3460807 <https://doi.org/10.1145/3460797.3460807>`_.
+
+.. _`[Access21]`:
+
+[Access21] Mattia Lecci, Matteo Drago, Andrea Zanella, Michele Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," submitted to IEEE Access, 2021, Preprint available: `arXiv:2108.04577 <https://arxiv.org/abs/2108.04577>`_.

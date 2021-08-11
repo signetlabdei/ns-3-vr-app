@@ -59,10 +59,23 @@ public:
    */
   virtual bool HasNextBurst (void) override;
 
+  /**
+   * \brief Returns the duration of the imported trace starting from the StartTime attribute
+   * \return the duration of the trace
+   */
+  double GetTraceDuration (void);
+
 protected:
   virtual void DoDispose (void) override;
 
 private:
+  // Private attribute accessors
+  void SetStartTime (double startTime);
+  double GetStartTime (void) const;
+
+  void SetTraceFile (std::string traceFile);
+  std::string GetTraceFile (void) const;
+
   /**
    * Clears the burst queue
    */
@@ -75,6 +88,7 @@ private:
 
   std::string m_traceFile{""}; //!< The name of the trace file
   double m_startTime{0.0}; //!< The trace will only generate traced traffic after a start time offset
+  double m_traceDuration{-1.0}; //!< The duration of the trace file considering the start time
   bool m_isFinalized{false}; //!< The generator is finalized only once ImportTrace ends with no errors
   std::queue<std::pair<uint32_t, Time>> m_burstQueue; //!< The burst information read from the trace
 };

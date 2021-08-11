@@ -21,6 +21,7 @@
 #include "ns3/random-variable-stream.h"
 #include "ns3/double.h"
 #include "ns3/data-rate.h"
+#include "ns3/enum.h"
 #include "ns3/nstime.h"
 #include "ns3/object-factory.h"
 #include "vr-burst-generator.h"
@@ -41,7 +42,8 @@ VrBurstGenerator::GetTypeId (void)
           .SetGroupName ("Applications")
           .AddConstructor<VrBurstGenerator> ()
           .AddAttribute ("FrameRate",
-                         "The frame rate of the VR application [FPS].",
+                         "The frame rate of the VR application [FPS]. "
+                         "Only 30 and 60 FPS are currently supported.",
                          DoubleValue (60),
                          MakeDoubleAccessor (&VrBurstGenerator::SetFrameRate,
                                              &VrBurstGenerator::GetFrameRate),
@@ -51,7 +53,15 @@ VrBurstGenerator::GetTypeId (void)
                          DataRateValue (DataRate ("20Mbps")),
                          MakeDataRateAccessor (&VrBurstGenerator::SetTargetDataRate,
                                                &VrBurstGenerator::GetTargetDataRate),
-                         MakeDataRateChecker ());
+                         MakeDataRateChecker ())
+          .AddAttribute ("VrAppName",
+                         "The VR application on which the model is based upon. Check the documentation for further information.",
+                         EnumValue (VrAppName::VirusPopper),
+                         MakeEnumAccessor (&VrBurstGenerator::m_appName),
+                         MakeEnumChecker (VrAppName::VirusPopper, "VirusPopper",
+                                          VrAppName::Minecraft, "Minecraft",
+                                          VrAppName::GoogleEarthVrCities, "GoogleEarthVrCities",
+                                          VrAppName::GoogleEarthVrTour, "GoogleEarthVrTour"));
   return tid;
 }
 
@@ -91,7 +101,8 @@ VrBurstGenerator::SetFrameRate (double frameRate)
 {
   NS_LOG_FUNCTION (this << frameRate);
 
-  NS_ABORT_MSG_IF (frameRate <= 0, "Frame rate must be positive, instead: " << frameRate);
+  NS_ABORT_MSG_UNLESS (frameRate == 30 || frameRate == 60,
+                       "Frame rate must be either 30 or 60 FPS, instead frameRate=" << frameRate);
   m_frameRate = frameRate;
 
   SetupModel ();
@@ -119,6 +130,21 @@ DataRate
 VrBurstGenerator::GetTargetDataRate (void) const
 {
   return m_targetDataRate;
+}
+
+void
+VrBurstGenerator::SetVrAppName (VrBurstGenerator::VrAppName vrAppName)
+{
+  NS_LOG_FUNCTION (this << vrAppName);
+
+  m_appName = vrAppName;
+  SetupModel ();
+}
+
+VrBurstGenerator::VrAppName
+VrBurstGenerator::GetVrAppName (void) const
+{
+  return m_appName;
 }
 
 bool
@@ -151,53 +177,126 @@ VrBurstGenerator::SetupModel ()
 {
   NS_LOG_FUNCTION (this);
 
-  double S = m_targetDataRate.GetBitRate () / 8.0 / m_frameRate; // expected frame size [B]
-  double ifi = 1.0 / m_frameRate; // expected inter frame interarrival [s]
+  double alpha{0};
+  double beta{0};
+  double gamma{0};
+  double delta{0};
+  double epsilon{0};
+
+  switch (m_appName)
+    {
+    case VrAppName::VirusPopper:
+      alpha = 0.17843005544386825;
+      beta = -0.24033549;
+      if (m_frameRate == 60)
+        {
+          gamma = 0.03720502322046791;
+        }
+      else if (m_frameRate == 30)
+        {
+          delta = 0.014333111298430356;
+          epsilon = 0.17636808;
+        }
+      else
+        {
+          NS_ABORT_MSG ("Unexpected frame rate: " << m_frameRate);
+        }
+      break;
+
+    case VrAppName::Minecraft:
+      alpha = 0.18570635904452573;
+      beta = -0.18721216;
+      if (m_frameRate == 60)
+        {
+          gamma = 0.07132669841811076;
+        }
+      else if (m_frameRate == 30)
+        {
+          delta = 0.024192743507827373;
+          epsilon = 0.22666163;
+        }
+      else
+        {
+          NS_ABORT_MSG ("Unexpected frame rate: " << m_frameRate);
+        }
+      break;
+
+    case VrAppName::GoogleEarthVrCities:
+      alpha = 0.259684566301378;
+      beta = -0.25390119;
+      if (m_frameRate == 60)
+        {
+          gamma = 0.034571656202610615;
+        }
+      else if (m_frameRate == 30)
+        {
+          delta = 0.008953037116942649;
+          epsilon = 0.3119082;
+        }
+      else
+        {
+          NS_ABORT_MSG ("Unexpected frame rate: " << m_frameRate);
+        }
+      break;
+
+    case VrAppName::GoogleEarthVrTour:
+      alpha = 0.25541435742159037;
+      beta = -0.20308171;
+      if (m_frameRate == 60)
+        {
+          gamma = 0.03468230656563422;
+        }
+      else if (m_frameRate == 30)
+        {
+          delta = 0.010559650431826953;
+          epsilon = 0.27560183;
+        }
+      else
+        {
+          NS_ABORT_MSG ("Unexpected frame rate: " << m_frameRate);
+        }
+      break;
+
+    default:
+      NS_ABORT_MSG ("m_appName was not recognized");
+      break;
+    }
+
+  double fsAvg = m_targetDataRate.GetBitRate () / 8.0 / m_frameRate; // expected frame size [B]
+  double ifiAvg = 1.0 / m_frameRate; // expected inter frame interarrival [s]
+  double targetRate_mbps = m_targetDataRate.GetBitRate () / 1e6;
 
   // Model frame size stats
-  double sP = 0.9008;
-  double sI = 1.1764;
+  double fsDispersion = alpha * std::pow (targetRate_mbps, beta);
+  double fsScale = fsAvg * fsDispersion;
+  NS_LOG_DEBUG ("Frame size: loc=" << fsAvg << ", scale=" << fsScale
+                                   << " (dispersion=" << fsDispersion << ")");
 
-  double aP = 9.0399;
-  double aI = 26.2065;
-  double bP = 0.6251;
-  double bI = 0.5730;
+  m_frameSizeRv = CreateObjectWithAttributes<LogisticRandomVariable> ("Location", DoubleValue (fsAvg),
+                                                                      "Scale", DoubleValue (fsScale),
+                                                                      "Bound", DoubleValue (fsAvg));
 
-  double wP = 0.6400; // wI = 1 - wP
+  // Model IFI stats
+  double ifiDispersion;
+  if (m_frameRate == 60)
+    {
+      ifiDispersion = gamma;
+    }
+  else if (m_frameRate == 30)
+    {
+      ifiDispersion = delta * std::pow (targetRate_mbps, epsilon);
+    }
+  else
+    {
+      NS_ABORT_MSG ("Unexpected frame rate: " << m_frameRate);
+    }
+  double ifiScale = ifiAvg * ifiDispersion;
+  NS_LOG_DEBUG ("IFI: loc=" << ifiAvg << ", scale=" << ifiScale
+                            << " (dispersion=" << ifiDispersion << ")");
 
-  double meanP = sP * S;
-  double stdP = aP * std::pow (S, bP);
-
-  double meanI = sI * S;
-  double stdI = aI * std::pow (S, bI);
-
-  NS_LOG_DEBUG ("Frame size: 2 component GMM with "
-                << "N1(mean=" << meanP << ",std=" << stdP << ") with wP=" << wP << ", "
-                << "N2(mean=" << meanI << ",std=" << stdI << ") with wI=" << 1 - wP);
-
-  Ptr<NormalRandomVariable> rvP = CreateObjectWithAttributes<NormalRandomVariable> (
-      "Mean", DoubleValue (meanP),
-      "Variance", DoubleValue (stdP * stdP),
-      "Bound", DoubleValue (meanP)); // avoid negative frame sizes
-  Ptr<NormalRandomVariable> rvI = CreateObjectWithAttributes<NormalRandomVariable> (
-      "Mean", DoubleValue (meanI),
-      "Variance", DoubleValue (stdI * stdI),
-      "Bound", DoubleValue (meanI)); // avoid negative frame sizes
-
-  m_frameSizeRv = CreateObject<MixtureRandomVariable> ();
-  std::vector<double> wCdf{wP, 1.0};
-  std::vector<Ptr<RandomVariableStream>> rvs{rvP, rvI};
-  m_frameSizeRv->SetRvs (wCdf, rvs);
-
-  // Model inter frame interarrival
-  double location = ifi;
-  double ifiStd = 0.0827205 / m_frameRate; // [s]
-  double scale = ifiStd * std::sqrt (3) / M_PI; // [s]
-
-  m_periodRv = CreateObjectWithAttributes<LogisticRandomVariable> (
-      "Location", DoubleValue (location),
-      "Scale", DoubleValue (scale),
-      "Bound", DoubleValue (location));
+  m_periodRv = CreateObjectWithAttributes<LogisticRandomVariable> ("Location", DoubleValue (ifiAvg),
+                                                                   "Scale", DoubleValue (ifiScale),
+                                                                   "Bound", DoubleValue (ifiAvg));
 }
 
 } // Namespace ns3

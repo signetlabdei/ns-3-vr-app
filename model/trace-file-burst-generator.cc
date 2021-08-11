@@ -43,12 +43,15 @@ TraceFileBurstGenerator::GetTypeId (void)
           .AddAttribute ("TraceFile",
                          "The path to the trace file",
                          StringValue (""),
-                         MakeStringAccessor (&TraceFileBurstGenerator::m_traceFile),
+                         MakeStringAccessor (&TraceFileBurstGenerator::GetTraceFile,
+                                             &TraceFileBurstGenerator::SetTraceFile),
                          MakeStringChecker ())
           .AddAttribute ("StartTime",
                          "The trace will only generate traced traffic after a start time offset [s]",
                          DoubleValue (0.0),
-                         MakeDoubleAccessor (&TraceFileBurstGenerator::m_startTime),              MakeDoubleChecker<double> (0.0));
+                         MakeDoubleAccessor (&TraceFileBurstGenerator::GetStartTime,
+                                             &TraceFileBurstGenerator::SetStartTime),
+                         MakeDoubleChecker<double> (0.0));
   return tid;
 }
 
@@ -71,6 +74,51 @@ TraceFileBurstGenerator::DoDispose (void)
 
   // chain up
   BurstGenerator::DoDispose ();
+}
+
+void
+TraceFileBurstGenerator::SetStartTime (double startTime)
+{
+  NS_LOG_FUNCTION (this << startTime);
+  if (startTime != m_startTime)
+  {
+    m_startTime = startTime;
+    m_isFinalized = false;
+  }
+}
+
+double
+TraceFileBurstGenerator::GetStartTime (void) const
+{
+  return m_startTime;
+}
+
+void
+TraceFileBurstGenerator::SetTraceFile (std::string traceFile)
+{
+  NS_LOG_FUNCTION (this << traceFile);
+  if (traceFile != m_traceFile)
+    {
+      m_traceFile = traceFile;
+      m_isFinalized = false;
+    }
+}
+
+std::string
+TraceFileBurstGenerator::GetTraceFile (void) const
+{
+  return m_traceFile;
+}
+
+double
+TraceFileBurstGenerator::GetTraceDuration (void)
+{
+  if (!m_isFinalized)
+  {
+    ImportTrace ();
+  }
+
+  return m_traceDuration;
 }
 
 bool
@@ -122,6 +170,7 @@ TraceFileBurstGenerator::ImportTrace (void)
   CsvReader csv (m_traceFile);
 
   ClearBurstQueue ();
+  m_traceDuration = 0;
   double cumulativeStartTime = 0;
   uint32_t burstSize;
   double period;
@@ -145,6 +194,7 @@ TraceFileBurstGenerator::ImportTrace (void)
       if (cumulativeStartTime >= m_startTime)
         {
           m_burstQueue.push (std::make_pair (burstSize, Seconds (period)));
+          m_traceDuration += period;
         }
       cumulativeStartTime += period;
     } // while FetchNextRow

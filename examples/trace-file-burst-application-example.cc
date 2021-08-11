@@ -28,6 +28,7 @@
 #include "ns3/seq-ts-size-frag-header.h"
 #include "ns3/bursty-helper.h"
 #include "ns3/burst-sink-helper.h"
+#include "ns3/trace-file-burst-generator.h"
 
 /**
  * Example of BurstyApplication using a TraceFileBurstGenerator.
@@ -61,7 +62,7 @@ int
 main (int argc, char *argv[])
 {
   std::string traceFolder = "contrib/vr-app/model/BurstGeneratorTraces/"; // example traces can be found here
-  std::string traceFile = "steam_init_20mbps_30fps_5min_usb_still.csv";
+  std::string traceFile = "ge_cities_20mbps_30fps.csv";
   double startTime = 0;
   double simTime = 20;
 
@@ -110,6 +111,18 @@ main (int argc, char *argv[])
   // Install bursty application
   ApplicationContainer serverApps = burstyHelper.Install (nodes.Get (1));
   Ptr<BurstyApplication> burstyApp = serverApps.Get (0)->GetObject<BurstyApplication> ();
+
+  // Extract TraceFileBurstGenerator and check if able to fill the entire simulation
+  PointerValue val;
+  burstyApp->GetAttribute ("BurstGenerator", val);
+  Ptr<TraceFileBurstGenerator> tfbg = DynamicCast<TraceFileBurstGenerator> (val.GetObject ());
+  NS_ASSERT_MSG (tfbg, "The bursty application should be a TraceFileBurstGenerator");
+
+  if (startTime + simTime > tfbg->GetTraceDuration ())
+    {
+      NS_LOG_WARN ("The trace file will end before the simulation ends. Please choose a different "
+                   << "start time, a longer trace, or reduce the simulation duration.");
+    }
 
   // Create burst sink helper
   BurstSinkHelper burstSinkHelper ("ns3::UdpSocketFactory",

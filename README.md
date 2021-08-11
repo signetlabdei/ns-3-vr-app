@@ -11,12 +11,11 @@ This module comprises the following features:
 
 * Adds `BurstyApplication` and `BurstSink` as ns-3 applications: they allow to model complex applications by sending large data packets over UDP sockets, fragmenting them into bursts of smaller packets, and reassembling the packets at the receiver, if possible
 * A tracing system allows to obtain burst-level and fragment-level information at both the transmitter and receiver side
-* Models a Virtual Reality traffic source
-* 10 of the acquired VR traffic traces can be found in [model/BurstGeneratorTraces/](model/BurstGeneratorTraces/) and can be used directly in a simulation, using the `TraceFileBurstGenerator`
+* Models Virtual Reality traffic sources with realistic head movements in popular VR applications
+* 40 of the acquired VR traffic traces can be found in [model/BurstGeneratorTraces/](model/BurstGeneratorTraces/) and can be used directly in a simulation, using the `TraceFileBurstGenerator`. More information can be found in the folder and in the documentation.
 * Additional traffic models can be implemented by simply extending the `BurstGenerator` interface
 
 Future releases will aim to:
-* Improve, add, and diversify the VR traffic traces, including realistic head movements in popular VR applications
 * Model second-order statistics for VR traffic
 * Include a head-rotation model, coupled with the VR traffic generator
 * Optionally include sound traffic in the VR traffic generator, other than video traffic
@@ -78,6 +77,7 @@ Compiling standalone documentation:
 1. Open with your browser the file `contrib/vr-app/doc/models/build/html/bursty-framework.html` to visualize the documentation of the model
 
 
-## Reference paper
+## Reference papers
 
-Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," accepted to Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Pre-print available: [arXiv:2103.04609](https://arxiv.org/abs/2103.04609)
+* M. Lecci, M. Drago, A. Zanella, M. Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," Submitted to IEEE Access, Pre-print available: [arXiv:2108.04577](https://arxiv.org/abs/2108.04577).
+* Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Open access DOI: [10.1145/3460797.3460807](https://doi.org/10.1145/3460797.3460807).

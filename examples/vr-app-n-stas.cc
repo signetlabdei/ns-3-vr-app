@@ -133,6 +133,7 @@ main (int argc, char *argv[])
   double distance = 1; // the distance from the AP [m]
   std::string appRate = "50Mbps"; // the app target data rate
   double frameRate = 60; // the app frame rate [FPS]
+  std::string vrAppName = "VirusPopper"; // the app name
   std::string burstGeneratorType = "model"; // type of burst generator {"model", "trace", "deterministic"}
   double simulationTime = 10; // simulation time in seconds
 
@@ -141,6 +142,7 @@ main (int argc, char *argv[])
   // cmd.AddValue ("distance", "the distance from the AP [m]", distance);
   cmd.AddValue ("appRate", "the app target data rate", appRate);
   cmd.AddValue ("frameRate", "the app frame rate [FPS]", frameRate);
+  cmd.AddValue ("vrAppName", "the app name", vrAppName);
   cmd.AddValue ("burstGeneratorType",
                 "type of burst generator {\"model\", \"trace\", \"deterministic\"}",
                 burstGeneratorType);
@@ -149,7 +151,7 @@ main (int argc, char *argv[])
 
   uint32_t fragmentSize = 1472; //bytes
   uint32_t channelWidth = 160; // MHz
-  bool sgi = false; // Use short guard interval
+  bool sgi = true; // Use short guard interval
 
   LogComponentEnableAll (LOG_PREFIX_ALL);
   LogComponentEnable ("VrAppNStas", LOG_INFO);
@@ -239,18 +241,43 @@ main (int argc, char *argv[])
 
   if (burstGeneratorType == "model")
     {
-      NS_LOG_DEBUG ("VR generator with framerate=" << frameRate << ", appRate=" << appRate);
+      NS_LOG_DEBUG ("VR generator with framerate=" << frameRate << ", appRate=" << appRate << ", vrAppName=" << vrAppName);
 
       client.SetBurstGenerator ("ns3::VrBurstGenerator",
                                 "FrameRate", DoubleValue (frameRate),
-                                "TargetDataRate", DataRateValue (DataRate (appRate)));
+                                "TargetDataRate", DataRateValue (DataRate (appRate)),
+                                "VrAppName", StringValue (vrAppName));
     }
   else if (burstGeneratorType == "trace")
     {
       uint32_t dataRateMbps = uint32_t (DataRate (appRate).GetBitRate () / 1e6);
+      std::string appAbbrev;
+      if (vrAppName == "VirusPopper")
+        {
+          appAbbrev = "vp";
+        }
+      else if (vrAppName == "Minecraft")
+        {
+          appAbbrev = "mc";
+        }
+      else if (vrAppName == "GoogleEarthVrCities")
+        {
+          appAbbrev = "ge_cities";
+        }
+      else if (vrAppName == "GoogleEarthVrTour")
+        {
+          appAbbrev = "ge_tour";
+        }
+      else
+        {
+          NS_ABORT_MSG ("vrAppName=" << vrAppName << " was not recognized");
+        }
+
       std::ostringstream filenameSs;
-      filenameSs << GetInputPath () << "src/applications/model/BurstGeneratorTraces/"
-                 << dataRateMbps << "mbps_" << uint32_t (frameRate) << "fps.csv";
+      filenameSs << GetInputPath () << "contrib/vr-app/model/BurstGeneratorTraces/"
+                 << appAbbrev << "_"
+                 << dataRateMbps << "mbps_"
+                 << uint32_t (frameRate) << "fps.csv";
 
       NS_LOG_DEBUG ("Trace file generator with filename=" << filenameSs.str ());
 
@@ -283,6 +310,7 @@ main (int argc, char *argv[])
   ApplicationContainer clientApps = client.Install (wifiStaNodes);
   Ptr<UniformRandomVariable> x = CreateObjectWithAttributes<UniformRandomVariable> (
       "Min", DoubleValue (0), "Max", DoubleValue (1));
+  Ptr<UniformRandomVariable> y = CreateObject<UniformRandomVariable> ();
   for (uint32_t i = 0; i < nStas; i++)
     {
       Time startTime = Seconds (x->GetValue ());
@@ -296,7 +324,12 @@ main (int argc, char *argv[])
       Ptr<TraceFileBurstGenerator> tfbg = DynamicCast<TraceFileBurstGenerator> (val.GetObject ());
       if (tfbg)
         {
-          tfbg->SetAttribute ("StartTime", DoubleValue (i * simulationTime));
+          NS_ABORT_MSG_IF (tfbg->GetTraceDuration () < simulationTime,
+                           "Trace too short for this simulation");
+
+          double traceStartTime = y->GetValue (0, tfbg->GetTraceDuration () - simulationTime);
+          NS_LOG_UNCOND ("STA" << i << " will start its trace from " << traceStartTime);
+          tfbg->SetAttribute ("StartTime", DoubleValue (traceStartTime));
         }
     }
   clientApps.Stop (Seconds (simulationTime + 1));

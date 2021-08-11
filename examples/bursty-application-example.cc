@@ -146,7 +146,7 @@ main (int argc, char *argv[])
   BurstSinkHelper burstSinkHelper ("ns3::UdpSocketFactory",
                                    InetSocketAddress (sinkAddress, portNumber));
 
-  // Install HTTP client
+  // Install burst sink
   ApplicationContainer clientApps = burstSinkHelper.Install (nodes.Get (0));
   Ptr<BurstSink> burstSink = clientApps.Get (0)->GetObject<BurstSink> ();
 
