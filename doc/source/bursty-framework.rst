@@ -109,8 +109,8 @@ References
 
 .. _`[WNS3-2021]`:
 
-[WNS3-2021] Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Open access DOI: `10.1145/3460797.3460807 <https://doi.org/10.1145/3460797.3460807>`_.
+[WNS3-2021] Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," in Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, US. DOI: `10.1145/3460797.3460807 <https://doi.org/10.1145/3460797.3460807>`_.
 
 .. _`[Access21]`:
 
-[Access21] Mattia Lecci, Matteo Drago, Andrea Zanella, Michele Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," submitted to IEEE Access, 2021, Preprint available: `arXiv:2108.04577 <https://arxiv.org/abs/2108.04577>`_.
+[Access21] Mattia Lecci, Matteo Drago, Andrea Zanella, Michele Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," in IEEE Access, vol. 9, pp. 129782-129795, 2021. DOI: `10.1109/ACCESS.2021.3113162 <https://doi.org/10.1109/ACCESS.2021.3113162>`_.

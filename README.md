@@ -79,5 +79,5 @@ Compiling standalone documentation:
 
 ## Reference papers
 
-* M. Lecci, M. Drago, A. Zanella, M. Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," Submitted to IEEE Access, Pre-print available: [arXiv:2108.04577](https://arxiv.org/abs/2108.04577).
-* Mattia Lecci, Andrea Zanella, Michele Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Open access DOI: [10.1145/3460797.3460807](https://doi.org/10.1145/3460797.3460807).
+* M. Lecci, M. Drago, A. Zanella, M. Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," in IEEE Access, vol. 9, pp. 129782-129795, 2021. Open Access DOI: [10.1109/ACCESS.2021.3113162](https://doi.org/10.1109/ACCESS.2021.3113162).
+* M. Lecci, A. Zanella, M. Zorzi, "An ns-3 Implementation of a Bursty Traffic Framework for Virtual Reality Sources," Workshop on ns-3 (WNS3), Jun. 2021, Virtual Event, USA, Open access DOI: [10.1145/3460797.3460807](https://doi.org/10.1145/3460797.3460807).

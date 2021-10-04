@@ -11,6 +11,6 @@ Specifically:
 Some additional meta data might be found in the commented header of the `.csv` file.
 
 For further information please check the reference paper:
-* M. Lecci, M. Drago, A. Zanella, M. Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," Submitted to IEEE Access, Pre-print available: [arXiv:2108.04577](https://arxiv.org/abs/2108.04577).
+* M. Lecci, M. Drago, A. Zanella, M. Zorzi, "An Open Framework for Analyzing and Modeling XR Network Traffic," in IEEE Access, vol. 9, pp. 129782-129795, 2021. Open Access DOI: [10.1109/ACCESS.2021.3113162](https://doi.org/10.1109/ACCESS.2021.3113162).
 
 NOTE: `.csv` traces are based on acquisitions of real VR traffic streaming. Target data and frame rate are only indicative and may vary over time as well as in average.
