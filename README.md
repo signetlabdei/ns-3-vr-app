@@ -56,8 +56,8 @@ git clone https://github.com/signetlabdei/ns-3-vr-app ns-3-dev/contrib/vr-app
 Configure and build ns-3 from the `ns-3-dev` folder:
 
 ```bash
-./waf configure --enable-tests --enable-examples
-./waf build
+./ns3 configure --enable-tests --enable-examples
+./ns3 build
 ```
 
 This module does not provide Python bindings at the moment.
