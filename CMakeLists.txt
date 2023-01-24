@@ -10,6 +10,7 @@ build_lib(
                  model/vr-burst-generator.cc
                  helper/bursty-helper.cc
                  helper/burst-sink-helper.cc
+                 helper/bursty-app-stats-calculator.cc
     HEADER_FILES model/burst-generator.h
                  model/burst-sink.h
                  model/bursty-application.h
@@ -20,6 +21,7 @@ build_lib(
                  model/vr-burst-generator.h
                  helper/bursty-helper.h
                  helper/burst-sink-helper.h
+                 helper/bursty-app-stats-calculator.h
     LIBRARIES_TO_LINK ${libcore}
                         ${libapplications}
                         ${libpoint-to-point}
