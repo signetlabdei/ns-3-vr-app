@@ -151,6 +151,7 @@ main (int argc, char *argv[])
 
   uint32_t fragmentSize = 1472; //bytes
   uint32_t channelWidth = 160; // MHz
+  double frequency = 5; // GHz
   bool sgi = true; // Use short guard interval
 
   LogComponentEnableAll (LOG_PREFIX_ALL);
@@ -168,6 +169,10 @@ main (int argc, char *argv[])
   YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
   YansWifiPhyHelper phy;
   phy.SetChannel (channel.Create ());
+  phy.Set("ChannelSettings",
+          StringValue(std::string("{0, ") + std::to_string(channelWidth) +
+                      ", " + (frequency == 2.4 ? "BAND_2_4GHZ" : "BAND_5GHZ") +
+                      ", 0}"));
 
   WifiHelper wifi;
   wifi.SetStandard (WIFI_STANDARD_80211ac);
@@ -190,9 +195,7 @@ main (int argc, char *argv[])
   NetDeviceContainer apDevice;
   apDevice = wifi.Install (phy, mac, wifiApNode);
 
-  Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (channelWidth));
   Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/HtConfiguration/ShortGuardIntervalSupported", BooleanValue (sgi));
-
   // Setting mobility model
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
