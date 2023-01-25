@@ -166,21 +166,25 @@ main (int argc, char *argv[])
   NodeContainer wifiApNode;
   wifiApNode.Create (1);
 
-  YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
-  YansWifiPhyHelper phy;
-  phy.SetChannel (channel.Create ());
-  phy.Set("ChannelSettings",
-          StringValue(std::string("{0, ") + std::to_string(channelWidth) +
-                      ", " + (frequency == 2.4 ? "BAND_2_4GHZ" : "BAND_5GHZ") +
-                      ", 0}"));
-
   WifiHelper wifi;
   wifi.SetStandard (WIFI_STANDARD_80211ac);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue ("VhtMcs9"),
                                 "ControlMode", StringValue ("VhtMcs0"));
-  WifiMacHelper mac;
 
+  YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
+  YansWifiPhyHelper phy;
+  phy.SetChannel (channel.Create ());
+
+  if (frequency != 5)
+  {
+    NS_ABORT_MSG("Frequency=" << frequency << "GHz not supported by this wifi standard.");
+  }
+
+  phy.Set("ChannelSettings",
+          StringValue(std::string("{0, ") + std::to_string(channelWidth) + ", BAND_5GHZ, 0}"));
+
+  WifiMacHelper mac;
   Ssid ssid = Ssid ("vr-app-n-stas");
   mac.SetType ("ns3::StaWifiMac",
                "Ssid", SsidValue (ssid));
