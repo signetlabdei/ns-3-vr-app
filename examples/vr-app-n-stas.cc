@@ -151,6 +151,7 @@ main (int argc, char *argv[])
 
   uint32_t fragmentSize = 1472; //bytes
   uint32_t channelWidth = 160; // MHz
+  double frequency = 5; // GHz
   bool sgi = true; // Use short guard interval
 
   LogComponentEnableAll (LOG_PREFIX_ALL);
@@ -165,17 +166,25 @@ main (int argc, char *argv[])
   NodeContainer wifiApNode;
   wifiApNode.Create (1);
 
-  YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
-  YansWifiPhyHelper phy;
-  phy.SetChannel (channel.Create ());
-
   WifiHelper wifi;
   wifi.SetStandard (WIFI_STANDARD_80211ac);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue ("VhtMcs9"),
                                 "ControlMode", StringValue ("VhtMcs0"));
-  WifiMacHelper mac;
 
+  YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
+  YansWifiPhyHelper phy;
+  phy.SetChannel (channel.Create ());
+
+  if (frequency != 5)
+  {
+    NS_ABORT_MSG("Frequency=" << frequency << "GHz not supported by this wifi standard.");
+  }
+
+  phy.Set("ChannelSettings",
+          StringValue(std::string("{0, ") + std::to_string(channelWidth) + ", BAND_5GHZ, 0}"));
+
+  WifiMacHelper mac;
   Ssid ssid = Ssid ("vr-app-n-stas");
   mac.SetType ("ns3::StaWifiMac",
                "Ssid", SsidValue (ssid));
@@ -190,9 +199,7 @@ main (int argc, char *argv[])
   NetDeviceContainer apDevice;
   apDevice = wifi.Install (phy, mac, wifiApNode);
 
-  Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (channelWidth));
   Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/HtConfiguration/ShortGuardIntervalSupported", BooleanValue (sgi));
-
   // Setting mobility model
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
