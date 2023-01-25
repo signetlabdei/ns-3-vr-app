@@ -43,3 +43,12 @@ build_lib_example(
                       ${libcore}
                       ${libwifi}
 )
+
+build_lib_example(
+    NAME stats-calculator-example
+    SOURCE_FILES stats-calculator-example.cc
+    LIBRARIES_TO_LINK ${libvr-app}
+                      ${libapplications}
+                      ${libcore}
+                      ${libwifi}
+)
