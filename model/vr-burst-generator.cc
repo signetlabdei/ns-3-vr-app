@@ -57,7 +57,7 @@ VrBurstGenerator::GetTypeId (void)
           .AddAttribute ("VrAppName",
                          "The VR application on which the model is based upon. Check the documentation for further information.",
                          EnumValue (VrAppName::VirusPopper),
-                         MakeEnumAccessor (&VrBurstGenerator::m_appName),
+                         MakeEnumAccessor<VrAppName> (&VrBurstGenerator::m_appName),
                          MakeEnumChecker (VrAppName::VirusPopper, "VirusPopper",
                                           VrAppName::Minecraft, "Minecraft",
                                           VrAppName::GoogleEarthVrCities, "GoogleEarthVrCities",
