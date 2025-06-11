@@ -1,17 +1,7 @@
-/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
 /*
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License version 2 as
- *   published by the Free Software Foundation;
+ *   SPDX-License-Identifier: GPL-2.0-only
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program; if not, write to the Free Software
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -47,7 +37,7 @@ struct AppResults
 };
 
 /**
- * \ingroup application
+ * @ingroup application
  *
  */
 class BurstyAppStatsCalculator : public Object
@@ -71,32 +61,32 @@ class BurstyAppStatsCalculator : public Object
     // Inherited from ns3::Object
     /**
      *  Register this type.
-     *  \return The object TypeId.
+     *  @return The object TypeId.
      */
     static TypeId GetTypeId(void);
     void DoDispose();
 
     /**
      *
-     * \param e the epoch duration
+     * @param e the epoch duration
      */
     void SetEpoch(Time e);
 
     /**
      *
-     * \return the epoch duration
+     * @return the epoch duration
      */
     Time GetEpoch() const;
 
     /**
      *
-     * \param t the value of the StartTime attribute
+     * @param t the value of the StartTime attribute
      */
     void SetStartTime(Time t);
 
     /**
      *
-     * \return the value of the StartTime attribute
+     * @return the value of the StartTime attribute
      */
     Time GetStartTime() const;
 
@@ -108,23 +98,23 @@ class BurstyAppStatsCalculator : public Object
 
     /**
      *
-     * \param u set the update mode (true if manual, automatic otherwise)
+     * @param u set the update mode (true if manual, automatic otherwise)
      */
     void SetManualUpdate(bool u);
 
     /**
      *
-     * \return whether the update is manual or not
+     * @return whether the update is manual or not
      */
     bool GetManualUpdate() const;
 
     /**
      * Notifies the stats calculator that a burst of packets has been transmitted.
-     * \param nodeId ID of the node sending the burst
-     * \param burst packet representing the complete burst
-     * \param from address of the transmitting terminal
-     * \param to address of the receiving terminal
-     * \param header burst header containing trasmission information
+     * @param nodeId ID of the node sending the burst
+     * @param burst packet representing the complete burst
+     * @param from address of the transmitting terminal
+     * @param to address of the receiving terminal
+     * @param header burst header containing trasmission information
      */
     void TxBurst(uint32_t nodeId,
                  Ptr<const Packet> burst,
@@ -134,11 +124,11 @@ class BurstyAppStatsCalculator : public Object
 
     /**
      * Notifies the stats calculator that a burst of packets has been transmitted.
-     * \param nodeId ID of the node receiving the burst
-     * \param burst packet representing the complete burst
-     * \param from address of the transmitting terminal
-     * \param to address of the receiving terminal
-     * \param header burst header containing trasmission information
+     * @param nodeId ID of the node receiving the burst
+     * @param burst packet representing the complete burst
+     * @param from address of the transmitting terminal
+     * @param to address of the receiving terminal
+     * @param header burst header containing trasmission information
      */
     void RxBurst(uint32_t nodeId,
                  Ptr<const Packet> burst,
@@ -172,13 +162,13 @@ class BurstyAppStatsCalculator : public Object
 
     /**
      *
-     * \param filename name of the output file
+     * @param filename name of the output file
      */
     void SetOutputFilename(std::string filename);
 
     /**
      *
-     * \return name of the output file
+     * @return name of the output file
      */
     std::string GetOutputFilename() const;
 

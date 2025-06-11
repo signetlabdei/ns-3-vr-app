@@ -1,10 +1,10 @@
 # AUTHOR(S):
 # Mattia Lecci <mattia.lecci@dei.unipd.it>
-# 
+#
 # University of Padova (UNIPD), Italy
-# Information Engineering Department (DEI) 
+# Information Engineering Department (DEI)
 # SIGNET Research Group @ http://signet.dei.unipd.it/
-# 
+#
 # Date: December 2020
 
 import sem
@@ -48,7 +48,7 @@ def compute_avg_burst_thr_mbps(results):
     # SrcAddress,TxTime_ns,RxTime_ns,BurstSeq,BurstSize
     delays = np.array([float(row.split(',')[4]) * 8 / 1e6 # Mb
                       for i, row in enumerate(trace.split('\n')[:-1]) if (i > 0)])
-    
+
     if len(delays) > 0:
         delay = np.sum(delays) / results['params']['simulationTime']
     else:
@@ -66,7 +66,7 @@ def compute_avg_burst_delay_ms(results):
     # SrcAddress,TxTime_ns,RxTime_ns,BurstSeq,BurstSize
     delays = np.array([(float(row.split(',')[2]) - float(row.split(',')[1])) / 1e6 # ms
                       for i, row in enumerate(trace.split('\n')[:-1]) if (i > 0)])
-    
+
     if len(delays) > 0:
         delay = np.mean(delays)
     else:
@@ -84,7 +84,7 @@ def compute_95perc_burst_delay_ms(results):
     # SrcAddress,TxTime_ns,RxTime_ns,BurstSeq,BurstSize
     delays = np.array([(float(row.split(',')[2]) - float(row.split(',')[1])) / 1e6 # ms
                       for i, row in enumerate(trace.split('\n')[:-1]) if (i > 0)])
-    
+
     if len(delays) > 0:
         delay = np.percentile(delays, 95)
     else:
@@ -99,11 +99,11 @@ def compute_burst_succ_rate(results):
     # print("id:", results['meta']['id'])
     trace = results['output']['txBurstsBySta.csv']
     tot_tx = np.sum([float(n) for n in trace.split('\n')[:-1]])
-    
+
     trace = results['output']['rxBursts.csv']
     tot_rx = float(trace.rstrip('\n'))
 
-    
+
     if tot_rx > 0:
         succ = tot_rx / tot_tx
     else:
@@ -119,7 +119,7 @@ def compute_avg_fragment_thr_mbps(results):
     # SrcAddress,TxTime_ns,RxTime_ns,BurstSeq,FragSeq,TotFrags,FragSize
     delays = np.array([float(row.split(',')[-1]) * 8 / 1e6 # Mb
                       for i, row in enumerate(trace.split('\n')[:-1]) if (i > 0)])
-    
+
     if len(delays) > 0:
         delay = np.sum(delays) / results['params']['simulationTime']
     else:
@@ -137,7 +137,7 @@ def compute_avg_fragment_delay_ms(results):
     # SrcAddress,TxTime_ns,RxTime_ns,BurstSeq,BurstSize
     delays = np.array([(float(row.split(',')[2]) - float(row.split(',')[1])) / 1e6 # ms
                       for i, row in enumerate(trace.split('\n')[:-1]) if (i > 0)])
-    
+
     if len(delays) > 0:
         delay = np.mean(delays)
     else:
@@ -155,7 +155,7 @@ def compute_95perc_fragment_delay_ms(results):
     # SrcAddress,TxTime_ns,RxTime_ns,BurstSeq,BurstSize
     delays = np.array([(float(row.split(',')[2]) - float(row.split(',')[1])) / 1e6 # ms
                       for i, row in enumerate(trace.split('\n')[:-1]) if (i > 0)])
-    
+
     if len(delays) > 0:
         delay = np.percentile(delays, 95)
     else:
@@ -170,10 +170,10 @@ def compute_fragment_succ_rate(results):
     # print("id:", results['meta']['id'])
     trace = results['output']['txFragmentsBySta.csv']
     tot_tx = np.sum([float(n) for n in trace.split('\n')[:-1]])
-    
+
     trace = results['output']['rxFragments.csv']
     tot_rx = float(trace.rstrip('\n'))
-    
+
     if tot_rx > 0:
         succ = tot_rx / tot_tx
     else:

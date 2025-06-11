@@ -29,7 +29,7 @@ More information can be found in the reference paper(s).
 ### Prerequisites ###
 
 To run simulations using this module, you will need to install ns-3, and clone
-this repository inside the `contrib` directory. 
+this repository inside the `contrib` directory.
 Required dependencies include git and a build environment.
 
 #### Installing dependencies ####
