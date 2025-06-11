@@ -27,7 +27,6 @@
 #include <ns3/log.h>
 #include <ns3/rng-stream.h>
 #include <ns3/rng-seed-manager.h>
-#include <ns3/unused.h>
 #include <ns3/object-factory.h>
 #include <cmath>
 #include <iostream>
