@@ -10,12 +10,11 @@
 #ifndef BURST_GENERATOR_H
 #define BURST_GENERATOR_H
 
+#include "ns3/nstime.h"
 #include "ns3/object.h"
 
 namespace ns3
 {
-
-class Time;
 
 /**
  * @ingroup applications
